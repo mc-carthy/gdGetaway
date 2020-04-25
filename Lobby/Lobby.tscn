@@ -111,5 +111,6 @@ text = "Join Game"
 
 [node name="Waiting" parent="." instance=ExtResource( 1 )]
 visible = false
+[connection signal="text_changed" from="VBoxContainer/CenterContainer/GridContainer/NameTextBox" to="." method="_on_NameTextBox_text_changed"]
 [connection signal="pressed" from="VBoxContainer/CenterContainer/GridContainer/HostButton" to="." method="_on_HostButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/CenterContainer/GridContainer/JoinButton" to="." method="_on_JoinButton_pressed"]
