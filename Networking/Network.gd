@@ -38,10 +38,11 @@ func _is_server() -> bool:
 	#return local_player_id == 1
 	return get_tree().is_network_server()
 
-func _send_player_info(id: int) -> void:
+remote func _send_player_info(id: int) -> void:
 	if _is_server():
 		print(str(id) + ' has connected.')
 
 func _on_player_connected(id: int):
 	if not _is_server():
 		print(str(id) + ' has connected.')
+		
