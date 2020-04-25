@@ -1,13 +1,15 @@
-[gd_scene format=2]
+[gd_scene load_steps=2 format=2]
 
-[node name="Waiting" type="Popup"]
-visible = true
+[ext_resource path="res://Lobby/Waiting.gd" type="Script" id=1]
+
+[node name="WaitingRoom" type="Popup"]
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -1024.0
 margin_top = -600.0
+script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -45,8 +47,9 @@ margin_bottom = 63.0
 
 [node name="ItemList" type="ItemList" parent="VBoxContainer/CenterContainer"]
 margin_left = 352.0
+margin_top = 22.0
 margin_right = 672.0
-margin_bottom = 45.0
+margin_bottom = 22.0
 rect_min_size = Vector2( 320, 0 )
 items = [ "Player 1", null, false, "Player 2", null, false ]
 auto_height = true
