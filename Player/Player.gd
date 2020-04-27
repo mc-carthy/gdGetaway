@@ -2,8 +2,9 @@ extends VehicleBody
 
 const MAX_STEER_ANGLE: float = 0.35
 const STEER_SPEED: float = 20.0
-const MAX_ENGINE_FORCE: float = 175.0
+const MAX_ENGINE_FORCE: float = 250.0
 const MAX_BRAKE_FORCE: float = 10.0
+const MAX_SPEED: float = 30.0
 
 var steer_target: float = 0.0
 var steer_angle: float = 0.0
@@ -22,6 +23,8 @@ func get_steer_angle(delta: float) -> float:
 	return lerp(steer_angle, steer_target, STEER_SPEED * delta)
 
 func get_throttle() -> float:
+	if linear_velocity.length() > MAX_SPEED:
+		return 0.0
 	if Input.is_action_pressed('brake') and (self.linear_velocity.length() < 0.01 or self.linear_velocity.z > 0):
 		return Input.get_action_strength('brake') * -MAX_ENGINE_FORCE / 2
 	return Input.get_action_strength('accelerate') * MAX_ENGINE_FORCE
