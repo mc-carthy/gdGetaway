@@ -5,7 +5,7 @@ const E: int = 2
 const S: int = 4
 const W: int = 8
 
-const spacing: int = 1
+const spacing: int = 2
 
 const CELL_WALLS = {
 	Vector3(0, 0, -spacing): N,
@@ -55,12 +55,25 @@ func make_maze() -> void:
 			
 			set_cell_item(current.x, 0, current.z, current_walls, 0)
 			set_cell_item(next.x, 0, next.z, next_walls, 0)
+			fill_gaps(current, direction)
 			
 			current = next
 			unvisited.erase(current)
 		elif stack.size() > 0:
 			current = stack.pop_back()
 
+func fill_gaps(current: Vector3, direction: Vector3) -> void:
+	var tile_type: int
+	
+	for i in range(1, spacing):
+		if direction.x != 0:
+			tile_type = 5
+			current.x += sign(direction.x)
+		if direction.z != 0:
+			tile_type = 10
+			current.z += sign(direction.z)
+		set_cell_item(current.x, 0, current.z, tile_type, 0)
+	
 func get_unvisited_neighbours(cell_location: Vector3, unvisited_cells):
 	var unvisited_neighbours = []
 	for cardinal_direction in CELL_WALLS.keys():
