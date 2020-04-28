@@ -51,10 +51,17 @@ remote func _send_player_info(id: int, player_data: Dictionary) -> void:
 		rset('players', players)
 		rpc('update_waiting_room')
 
-func _on_player_connected(id: int):
+func _on_player_connected(id: int) -> void:
 	if not _is_server():
 		print(str(id) + ' has connected.')
 		
 
-sync func update_waiting_room():
+sync func update_waiting_room() -> void:
 	get_tree().call_group('waiting_room', 'refresh_players', players)
+
+func start_game() -> void:
+	rpc('load_world')
+
+sync func load_world() -> void:
+	# TODO: Replace with node ref
+	get_tree().change_scene('res://World/World.tscn')
