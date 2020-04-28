@@ -23,7 +23,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.14583, 0 )
 shape = SubResource( 1 )
 
 [node name="WheelFR" type="VehicleWheel" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.85, 0.3, 1.5 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.85, 0.5, 1.5 )
 engine_force = 4.57818e-41
 use_as_steering = true
 wheel_roll_influence = 0.05
@@ -44,7 +44,7 @@ material/1 = null
 material/2 = null
 
 [node name="WheelRR" type="VehicleWheel" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.85, 0.3, -1.2 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.85, 0.5, -1.2 )
 engine_force = 4.57818e-41
 use_as_traction = true
 wheel_roll_influence = 0.05
@@ -65,7 +65,7 @@ material/1 = null
 material/2 = null
 
 [node name="WheelFL" type="VehicleWheel" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85, 0.3, 1.5 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85, 0.5, 1.5 )
 engine_force = 4.57818e-41
 use_as_steering = true
 wheel_roll_influence = 0.05
@@ -85,7 +85,7 @@ material/1 = null
 material/2 = null
 
 [node name="WheelRL" type="VehicleWheel" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85, 0.3, -1.2 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85, 0.5, -1.2 )
 engine_force = 4.57818e-41
 use_as_traction = true
 wheel_roll_influence = 0.05
