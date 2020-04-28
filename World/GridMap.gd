@@ -14,6 +14,8 @@ const CELL_WALLS = {
 	Vector3(-spacing, 0, 0): W,
 }
 
+const erase_percentage: float = 0.25
+
 var x_size: int = 20
 var z_size: int = 20
 
@@ -30,6 +32,26 @@ func make_blank_map() -> void:
 func make_map() -> void:
 	make_blank_map()
 	make_maze()
+	erase_walls()
+
+func erase_walls() -> void:
+	for i in range(int(x_size * z_size * erase_percentage)):
+		var x: int = int(rand_range(1, (x_size - 1) / spacing)) * spacing
+		var z: int = int(rand_range(1, (z_size - 1) / spacing)) * spacing
+		var cell: Vector3 = Vector3(x, 0, z)
+		var current_cell: int = get_cell_item(cell.x, cell.y, cell.z)
+		var neighbour: Vector3 = CELL_WALLS.keys()[randi() % CELL_WALLS.size()]
+		
+		if current_cell & CELL_WALLS[neighbour]:
+			var walls: int = current_cell - CELL_WALLS[neighbour]
+			var neighbour_walls: int = get_cell_item(
+				cell.x + neighbour.x,
+				cell.y + neighbour.y,
+				cell.z + neighbour.z
+			) - CELL_WALLS[-neighbour]
+			set_cell_item(cell.x, 0, cell.z, walls, 0)
+			set_cell_item(cell.x + neighbour.x, 0, cell.z + neighbour.z, neighbour_walls, 0)
+			fill_gaps(cell, neighbour)
 
 func make_maze() -> void:
 	var unvisited = []
