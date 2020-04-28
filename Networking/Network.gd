@@ -41,18 +41,18 @@ func _connected_to_server() -> void:
 	add_to_player_list()
 	rpc('_send_player_info', local_player_id, local_player_data)
 
-func _is_server() -> bool:
+func is_server() -> bool:
 	#return local_player_id == 1
 	return get_tree().is_network_server()
 
 remote func _send_player_info(id: int, player_data: Dictionary) -> void:
 	players[id] = player_data
-	if _is_server():
+	if is_server():
 		rset('players', players)
 		rpc('update_waiting_room')
 
 func _on_player_connected(id: int) -> void:
-	if not _is_server():
+	if not is_server():
 		print(str(id) + ' has connected.')
 		
 
