@@ -15,8 +15,10 @@ const CELL_WALLS = {
 }
 
 const MAX_ROAD_INDEX = 15
-const BUILDING_INDICES = [16, 17, 18]
+const BUILDING_INDICES = [17, 18]
 const BUIDLING_ORIENTATIONS = [0, 10, 16, 22]
+const SKYSCRAPER_INDEX = 16
+const SKYSCRAPER_CHANCE = 0.025
 
 const erase_percentage: float = 0.25
 
@@ -35,7 +37,10 @@ func make_blank_map() -> void:
 			set_cell_item(x, 0, z, building_index, BUIDLING_ORIENTATIONS[randi()% BUIDLING_ORIENTATIONS.size()])
 
 func choose_building_index() -> int:
-	return BUILDING_INDICES[randi() % BUILDING_INDICES.size() - 1]
+	if randf() < SKYSCRAPER_CHANCE:
+		return SKYSCRAPER_INDEX
+	else:
+		return BUILDING_INDICES[randi() % BUILDING_INDICES.size() - 1]
 
 func make_map() -> void:
 	make_blank_map()
