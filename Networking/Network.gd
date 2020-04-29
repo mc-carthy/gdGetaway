@@ -9,6 +9,7 @@ var selected_ip: String
 var selected_port: int
 
 var local_player_id: int = 0
+var players_ready: int = 0
 sync var players: Dictionary = {}
 sync var local_player_data: Dictionary = {}
 

@@ -30,6 +30,7 @@ func _ready() -> void:
 	if Network.is_server():
 		randomize()
 		make_map()
+		rpc('send_ready')
 
 func make_blank_map() -> void:
 	for x in x_size:
@@ -123,3 +124,17 @@ func get_unvisited_neighbours(cell_location: Vector3, unvisited_cells):
 
 sync func place_cell(x, y, z, cell, orientation) -> void:
 	set_cell_item(x, y, z, cell, orientation)
+
+sync func send_ready() -> void:
+	if Network.is_server():
+		player_ready()
+	else:
+		rpc_id(1, 'player_ready')
+
+remote func player_ready() -> void:
+	Network.players_ready += 1
+	if Network.players_ready == Network.players.size():
+		rpc('send_go')
+
+sync func send_go() -> void:
+	get_tree().call_group('GameState', 'unpause')

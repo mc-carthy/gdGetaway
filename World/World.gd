@@ -1,8 +1,15 @@
 extends Spatial
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	get_tree().paused = true
+
+func unpause() -> void:
+	get_tree().paused = false
 	spawn_local_player()
 	rpc('spawn_remote_player', Network.local_player_id)
+
+func _ready() -> void:
+	pass
 
 func spawn_local_player() -> void:
 	# TODO: Make player class name to enable auto-complete
