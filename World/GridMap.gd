@@ -14,6 +14,9 @@ const CELL_WALLS = {
 	Vector3(-spacing, 0, 0): W,
 }
 
+const MAX_ROAD_INDEX = 15
+const BUILDING_INDICES = [16, 17, 18]
+
 const erase_percentage: float = 0.25
 
 var x_size: int = 20
@@ -27,7 +30,11 @@ func _ready() -> void:
 func make_blank_map() -> void:
 	for x in x_size:
 		for z in z_size:
-			set_cell_item(x, 0, z, 15)
+			var building_index = choose_building_index()
+			set_cell_item(x, 0, z, building_index)
+
+func choose_building_index() -> int:
+	return BUILDING_INDICES[randi() % BUILDING_INDICES.size() - 1]
 
 func make_map() -> void:
 	make_blank_map()
@@ -43,12 +50,12 @@ func erase_walls() -> void:
 		var neighbour: Vector3 = CELL_WALLS.keys()[randi() % CELL_WALLS.size()]
 		
 		if current_cell & CELL_WALLS[neighbour]:
-			var walls: int = current_cell - CELL_WALLS[neighbour]
-			var neighbour_walls: int = get_cell_item(
+			var walls: int = clamp(current_cell - CELL_WALLS[neighbour], 0, MAX_ROAD_INDEX)
+			var neighbour_walls: int = clamp(get_cell_item(
 				cell.x + neighbour.x,
 				cell.y + neighbour.y,
 				cell.z + neighbour.z
-			) - CELL_WALLS[-neighbour]
+			) - CELL_WALLS[-neighbour], 0, MAX_ROAD_INDEX)
 			set_cell_item(cell.x, 0, cell.z, walls, 0)
 			set_cell_item(cell.x + neighbour.x, 0, cell.z + neighbour.z, neighbour_walls, 0)
 			fill_gaps(cell, neighbour)
@@ -67,18 +74,22 @@ func make_maze() -> void:
 	while unvisited:
 		var neighbours = get_unvisited_neighbours(current, unvisited)
 		if neighbours.size() > 0:
+			var next: Vector3
+			if current == Vector3.ZERO:
+				next = Vector3(0, 0, spacing)
+			else:
+				next = neighbours[randi() % neighbours.size()]
+
 			stack.append(current)
-			
-			var next: Vector3 = neighbours[randi() % neighbours.size()]
 			var direction: Vector3 = next - current
-			
-			var current_walls = get_cell_item(current.x, 0, current.z) - CELL_WALLS[direction]
-			var next_walls = get_cell_item(next.x, 0, next.z) -CELL_WALLS[-direction]
-			
+
+			var current_walls = min(get_cell_item(current.x, 0, current.z), MAX_ROAD_INDEX) - CELL_WALLS[direction]
+			var next_walls = min(get_cell_item(next.x, 0, next.z), MAX_ROAD_INDEX) -CELL_WALLS[-direction]
+
 			set_cell_item(current.x, 0, current.z, current_walls, 0)
 			set_cell_item(next.x, 0, next.z, next_walls, 0)
 			fill_gaps(current, direction)
-			
+
 			current = next
 			unvisited.erase(current)
 		elif stack.size() > 0:
