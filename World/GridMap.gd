@@ -29,8 +29,12 @@ func _ready() -> void:
 	clear()	
 	if Network.is_server():
 		randomize()
+		make_map_border()
 		make_map()
 		rpc('send_ready')
+
+func make_map_border() -> void:
+	$Border.resize_border(cell_size.x, x_size)
 
 func make_blank_map() -> void:
 	for x in x_size:
