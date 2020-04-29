@@ -26,15 +26,16 @@ var x_size: int = 20
 var z_size: int = 20
 
 func _ready() -> void:
-	randomize()
-	clear()
-	make_map()
+	clear()	
+	if Network.is_server():
+		randomize()
+		make_map()
 
 func make_blank_map() -> void:
 	for x in x_size:
 		for z in z_size:
 			var building_index = choose_building_index()
-			set_cell_item(x, 0, z, building_index, BUIDLING_ORIENTATIONS[randi()% BUIDLING_ORIENTATIONS.size()])
+			rpc('place_cell', x, 0, z, building_index, BUIDLING_ORIENTATIONS[randi()% BUIDLING_ORIENTATIONS.size()])
 
 func choose_building_index() -> int:
 	if randf() < SKYSCRAPER_CHANCE:
@@ -62,8 +63,8 @@ func erase_walls() -> void:
 				cell.y + neighbour.y,
 				cell.z + neighbour.z
 			) - CELL_WALLS[-neighbour], 0, MAX_ROAD_INDEX)
-			set_cell_item(cell.x, 0, cell.z, walls, 0)
-			set_cell_item(cell.x + neighbour.x, 0, cell.z + neighbour.z, neighbour_walls, 0)
+			rpc('place_cell', cell.x, 0, cell.z, walls, 0)
+			rpc('place_cell', cell.x + neighbour.x, 0, cell.z + neighbour.z, neighbour_walls, 0)
 			fill_gaps(cell, neighbour)
 
 func make_maze() -> void:
@@ -92,8 +93,8 @@ func make_maze() -> void:
 			var current_walls = min(get_cell_item(current.x, 0, current.z), MAX_ROAD_INDEX) - CELL_WALLS[direction]
 			var next_walls = min(get_cell_item(next.x, 0, next.z), MAX_ROAD_INDEX) -CELL_WALLS[-direction]
 
-			set_cell_item(current.x, 0, current.z, current_walls, 0)
-			set_cell_item(next.x, 0, next.z, next_walls, 0)
+			rpc('place_cell', current.x, 0, current.z, current_walls, 0)
+			rpc('place_cell', next.x, 0, next.z, next_walls, 0)
 			fill_gaps(current, direction)
 
 			current = next
@@ -111,7 +112,7 @@ func fill_gaps(current: Vector3, direction: Vector3) -> void:
 		if direction.z != 0:
 			tile_type = 10
 			current.z += sign(direction.z)
-		set_cell_item(current.x, 0, current.z, tile_type, 0)
+		rpc('place_cell', current.x, 0, current.z, tile_type, 0)
 	
 func get_unvisited_neighbours(cell_location: Vector3, unvisited_cells):
 	var unvisited_neighbours = []
@@ -119,3 +120,6 @@ func get_unvisited_neighbours(cell_location: Vector3, unvisited_cells):
 		if cell_location + cardinal_direction in unvisited_cells:
 			unvisited_neighbours.append(cell_location + cardinal_direction)
 	return unvisited_neighbours
+
+sync func place_cell(x, y, z, cell, orientation) -> void:
+	set_cell_item(x, y, z, cell, orientation)
