@@ -2,15 +2,19 @@ extends Node
 
 const TILE_SIZE = 20
 
+onready var gridmap: GridMap = get_node('..')
+
 var tiles = []
 var map_size: Vector2 = Vector2.ZERO
+
 var number_of_parked_cars = 10
-onready var gridmap: GridMap = get_node('..')
+var number_of_billboards = 10
 
 func generate_props(tile_list, size: Vector2) -> void:
 	tiles = tile_list
 	size = map_size
 	place_cars()
+	place_billboards()
 
 func place_cars() -> void:
 	var tile_list = random_tile(number_of_parked_cars)
@@ -28,6 +32,23 @@ sync func spawn_car(tile: Vector3, rotation: int) -> void:
 	car.translation = Vector3(tile.x * TILE_SIZE + TILE_SIZE / 2, tile.y, tile.z * TILE_SIZE + TILE_SIZE / 2)
 	car.rotation_degrees.y = rotation
 	add_child(car, true)
+
+func place_billboards() -> void:
+	var tile_list = random_tile(number_of_billboards)
+	for i in range(number_of_billboards):
+		var tile = tile_list.pop_front()
+		var tile_type = gridmap.get_cell_item(tile.x, 0, tile.z)
+		var allowed_rotations = $ObjectRotationLookup.lookup_tile_rotation(tile_type)
+		if allowed_rotations:
+			var tile_rotation: int = allowed_rotations[randi() % allowed_rotations.size() - 1] * -1
+			tile.y += 0.5
+			rpc('spawn_billboard', tile, tile_rotation)
+
+sync func spawn_billboard(tile: Vector3, rotation: int) -> void:
+	var billboard = preload('res://Props/Billboards/Billboard.tscn').instance()
+	billboard.translation = Vector3(tile.x * TILE_SIZE + TILE_SIZE / 2, tile.y, tile.z * TILE_SIZE + TILE_SIZE / 2)
+	billboard.rotation_degrees.y = rotation
+	add_child(billboard, true)
 
 func random_tile(tile_count: int):
 	var tile_list = tiles
