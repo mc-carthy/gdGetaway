@@ -12,6 +12,7 @@ var number_of_billboards = 10
 var number_of_traffic_cones = 10
 var number_of_hydrants = 10
 var number_of_lights = 10
+var number_of_dumpsters = 5
 
 func generate_props(tile_list, size: Vector2) -> void:
 	tiles = tile_list
@@ -23,7 +24,7 @@ func generate_props(tile_list, size: Vector2) -> void:
 	place_lights()
 
 func place_cars() -> void:
-	var tile_list = random_tile(number_of_parked_cars)
+	var tile_list = random_tile(number_of_parked_cars + number_of_dumpsters)
 	for i in range(number_of_parked_cars):
 		var tile = tile_list.pop_front()
 		var tile_type = gridmap.get_cell_item(tile.x, 0, tile.z)
@@ -32,12 +33,29 @@ func place_cars() -> void:
 			var tile_rotation: int = allowed_rotations[randi() % allowed_rotations.size() - 1] * -1
 			tile.y += 0.5
 			rpc('spawn_car', tile, tile_rotation)
+	place_dumpsters(tile_list)
 
 sync func spawn_car(tile: Vector3, rotation: int) -> void:
 	var car = preload('res://Props/ParkedCars.tscn').instance()
 	car.translation = Vector3(tile.x * TILE_SIZE + TILE_SIZE / 2, tile.y, tile.z * TILE_SIZE + TILE_SIZE / 2)
 	car.rotation_degrees.y = rotation
 	add_child(car, true)
+
+func place_dumpsters(tile_list) -> void:
+	for i in range(number_of_dumpsters):
+		var tile = tile_list.pop_front()
+		var tile_type = gridmap.get_cell_item(tile.x, 0, tile.z)
+		var allowed_rotations = $ObjectRotationLookup.lookup_tile_rotation(tile_type)
+		if allowed_rotations:
+			var tile_rotation: int = allowed_rotations[randi() % allowed_rotations.size() - 1] * -1
+			tile.y += 0.5
+			rpc('spawn_dumpster', tile, tile_rotation)
+
+sync func spawn_dumpster(tile: Vector3, rotation: int) -> void:
+	var dumpster = preload('res://Props/Dumpster/Dumpster.tscn').instance()
+	dumpster.translation = Vector3(tile.x * TILE_SIZE + TILE_SIZE / 2, tile.y, tile.z * TILE_SIZE + TILE_SIZE / 2)
+	dumpster.rotation_degrees.y = rotation
+	add_child(dumpster, true)
 
 func place_lights() -> void:
 	var tile_list = random_tile(number_of_lights)
