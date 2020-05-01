@@ -1,6 +1,6 @@
 extends VehicleBody
 
-const MAX_STEER_ANGLE: float = 0.35
+const MAX_STEER_ANGLE: float = 0.5
 const STEER_SPEED: float = 20.0
 const MAX_ENGINE_FORCE: float = 250.0
 const MAX_BRAKE_FORCE: float = 10.0
