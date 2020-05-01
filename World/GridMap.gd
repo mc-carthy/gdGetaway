@@ -22,8 +22,8 @@ const SKYSCRAPER_CHANCE = 0.025
 
 const erase_percentage: float = 0.25
 
-var x_size: int = 20
-var z_size: int = 20
+var x_size: int = 6
+var z_size: int = 6
 
 func _ready() -> void:
 	clear()	
@@ -31,7 +31,22 @@ func _ready() -> void:
 		randomize()
 		make_map_border()
 		make_map()
+		record_tile_positions()
 		rpc('send_ready')
+
+func is_building(cell_type: int) -> bool:
+	return cell_type > MAX_ROAD_INDEX
+
+func record_tile_positions() -> void:
+	var tiles = []
+	for x in range(0, x_size):
+		for z in range(0, z_size):
+			var current_cell: Vector3 = Vector3(x, 0, z)
+			var current_tile_type: int = get_cell_item(x, 0, z)
+			if not is_building(current_tile_type):
+				tiles.append(current_cell)
+	var map_size: Vector2 = Vector2(x_size, z_size)
+	$ObjectSpawner.generate_props(tiles, map_size)
 
 func make_map_border() -> void:
 	$Border.resize_border(cell_size.x, x_size)
