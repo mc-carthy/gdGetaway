@@ -13,6 +13,7 @@ var number_of_traffic_cones = 10
 var number_of_hydrants = 10
 var number_of_lights = 10
 var number_of_dumpsters = 5
+var number_of_scaffolds = 5
 
 func generate_props(tile_list, size: Vector2) -> void:
 	tiles = tile_list
@@ -22,6 +23,7 @@ func generate_props(tile_list, size: Vector2) -> void:
 	place_traffic_cones()
 	place_hydrants()
 	place_lights()
+	place_scaffolds()
 
 func place_cars() -> void:
 	var tile_list = random_tile(number_of_parked_cars + number_of_dumpsters)
@@ -56,6 +58,23 @@ sync func spawn_dumpster(tile: Vector3, rotation: int) -> void:
 	dumpster.translation = Vector3(tile.x * TILE_SIZE + TILE_SIZE / 2, tile.y, tile.z * TILE_SIZE + TILE_SIZE / 2)
 	dumpster.rotation_degrees.y = rotation
 	add_child(dumpster, true)
+
+func place_scaffolds() -> void:
+	var tile_list = random_tile(number_of_scaffolds)
+	for i in range(number_of_scaffolds):
+		var tile = tile_list.pop_front()
+		var tile_type = gridmap.get_cell_item(tile.x, 0, tile.z)
+		var allowed_rotations = $ObjectRotationLookup.lookup_tile_rotation(tile_type)
+		if allowed_rotations:
+			var tile_rotation: int = allowed_rotations[randi() % allowed_rotations.size() - 1] * -1
+			tile.y += 0.5
+			rpc('spawn_scaffold', tile, tile_rotation)
+
+sync func spawn_scaffold(tile: Vector3, rotation: int) -> void:
+	var scaffold = preload('res://Props/Scaffold/Scaffold.tscn').instance()
+	scaffold.translation = Vector3(tile.x * TILE_SIZE + TILE_SIZE / 2, tile.y, tile.z * TILE_SIZE + TILE_SIZE / 2)
+	scaffold.rotation_degrees.y = rotation
+	add_child(scaffold, true)
 
 func place_lights() -> void:
 	var tile_list = random_tile(number_of_lights)
