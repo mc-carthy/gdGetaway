@@ -89,7 +89,7 @@ func place_lights() -> void:
 
 sync func spawn_light(tile: Vector3, rotation: int) -> void:
 	var light = preload('res://Props/StreetLamp/StreetLamp.tscn').instance()
-	light.translation = Vector3(tile.x * TILE_SIZE + TILE_SIZE / 2, tile.y, tile.z * TILE_SIZE + TILE_SIZE / 2)
+	light.translation = Vector3(tile.x * TILE_SIZE, tile.y, tile.z * TILE_SIZE)
 	light.rotation_degrees.y = rotation
 	add_child(light, true)
 
