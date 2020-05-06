@@ -15,7 +15,12 @@ const CELL_WALLS = {
 }
 
 const MAX_ROAD_INDEX = 15
-const BUILDING_INDICES = [17, 18, 19, 20, 21, 22, 23, 24]
+const BUILDING_INDICES = {
+	0: [17, 18, 19],
+	1: [20, 21],
+	2: [22, 23, 24],
+	3: [25, 26, 27]
+}
 const BUIDLING_ORIENTATIONS = [0, 10, 16, 22]
 const SKYSCRAPER_INDEX = 16
 const SKYSCRAPER_CHANCE = 0.025
@@ -54,14 +59,21 @@ func make_map_border() -> void:
 func make_blank_map() -> void:
 	for x in x_size:
 		for z in z_size:
-			var building_index = choose_building_index()
+			var building_index = choose_building_index(x, z)
 			rpc('place_cell', x, 0, z, building_index, BUIDLING_ORIENTATIONS[randi()% BUIDLING_ORIENTATIONS.size()])
 
-func choose_building_index() -> int:
+func choose_building_index(x_coord: int, z_coord: int) -> int:
+	var neighbourhood_index: int = 0
+	if x_coord >= x_size / 2:
+		neighbourhood_index += 1
+	if z_coord >= z_size / 2:
+		neighbourhood_index += 2
+	var buildings_array = BUILDING_INDICES[neighbourhood_index]
+
 	if randf() < SKYSCRAPER_CHANCE:
 		return SKYSCRAPER_INDEX
 	else:
-		return BUILDING_INDICES[randi() % BUILDING_INDICES.size() - 1]
+		return buildings_array[randi() % buildings_array.size() - 1]
 
 func make_map() -> void:
 	make_blank_map()
